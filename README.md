@@ -7,8 +7,8 @@ Simple implementation of a Naive Bayes classifier for sentiment analysis on movi
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/Pacatro/bayesian_emotions.git
-    cd bayesian_emotions
+    git clone https://github.com/Pacatro/Bayesian-Emotions.git
+    cd Bayesian-Emotions
     ```
 
 2. This project uses [`uv`](https://docs.astral.sh/uv/) for package management. You can run the following command to setup the entire project:
