@@ -136,19 +136,15 @@ class BayesianClsf:
                 n_neg + self.smoothing_factor * V
             )
 
-    def predict(self, review: str) -> str:
-        """Predicts the sentiment of a single review.
-
-        This method calculates the posterior probability for each class and
-        returns the class with the higher probability.
+    def _calc_posterior_probs(self, words: list[str]) -> tuple[float, float]:
+        """Calculates the posterior probabilities for each class given a list of words.
 
         Args:
-            review (str): The review text to classify.
+            words (list[str]): The list of words in the review.
 
         Returns:
-            str: The predicted sentiment ("positive" or "negative").
+            tuple[float, float]: The posterior probabilities for the positive and negative classes.
         """
-        words = self.__clean_review(review)
         log_pos = np.log(self.prior_positive)
         log_neg = np.log(self.prior_negative)
         for w in words:
@@ -156,4 +152,26 @@ class BayesianClsf:
                 log_pos += np.log(self.positive_likelihoods[w])
             if w in self.negative_likelihoods:
                 log_neg += np.log(self.negative_likelihoods[w])
-        return "positive" if log_pos > log_neg else "negative"
+        return log_pos, log_neg
+
+    def predict(self, reviews: str | list[str]) -> list[str]:
+        """Predicts the sentiment for a single review or a list of reviews.
+
+        Args:
+            reviews (str | list[str]): A single review string or a list of review strings.
+
+        Returns:
+            list[str]: The predicted sentiment ("positive" or "negative") for
+                a list of predictions for multiple reviews.
+        """
+
+        if isinstance(reviews, str):
+            reviews = [reviews]
+
+        preds = []
+        for review in reviews:
+            words = self.__clean_review(review)
+            log_pos, log_neg = self._calc_posterior_probs(words)
+            preds.append("positive" if log_pos > log_neg else "negative")
+
+        return preds
